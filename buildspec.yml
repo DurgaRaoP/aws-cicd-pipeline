@@ -1,0 +1,47 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo "Install phase - Python 3.11 environment ready"
+      - pip install --upgrade pip --quiet
+
+  pre_build:
+    commands:
+      - echo "Pre-build phase started at $(date)"
+      - echo "Preparing Lambda package..."
+      - cd lambda
+      - echo "Files in lambda folder:"
+      - ls -la
+
+  build:
+    commands:
+      - echo "Build phase started at $(date)"
+      - zip -r ../lambda_package.zip lambda_function.py
+      - cd ..
+      - echo "Lambda package created:"
+      - ls -lh lambda_package.zip
+
+  post_build:
+    commands:
+      - echo "Post-build phase - deploying to Lambda"
+      - |
+        aws lambda update-function-code \
+          --function-name aws-cicd-pipeline-demo \
+          --zip-file fileb://lambda_package.zip \
+          --region ap-south-1
+      - echo "Waiting for Lambda update to complete..."
+      - sleep 5
+      - |
+        aws lambda update-function-configuration \
+          --function-name aws-cicd-pipeline-demo \
+          --environment "Variables={APP_VERSION=2.0.$CODEBUILD_BUILD_NUMBER,DEPLOYED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)}" \
+          --region ap-south-1
+      - echo "Deployment complete! Build number $CODEBUILD_BUILD_NUMBER"
+
+artifacts:
+  files:
+    - lambda_package.zip
+  name: lambda-artifact
