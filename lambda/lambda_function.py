@@ -10,7 +10,7 @@ def lambda_handler(event, context):
         "event": "lambda_invoked",
         "version": version,
         "deployed_at": deployed_at,
-        "message": "CI/CD pipeline is working!"
+        "message": "CI/CD pipeline auto-triggered from GitHub push!"
     }))
 
     return {
