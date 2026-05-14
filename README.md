@@ -5,9 +5,7 @@ automatically triggers deployment to Lambda — zero manual steps.
 
 ## Architecture
 
-![CI/CD Architecture](./screenshots/architecture-preview.png)
-
-[View Full Architecture PDF](./screenshots/cicd-architecture.pdf)
+![CI/CD Architecture](./screenshots/architecture-cicd-diagram.png)
 
 ## How It Works
 
